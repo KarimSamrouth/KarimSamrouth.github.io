@@ -1,18 +1,50 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>First Website</title>
-  </head>
-  <body style="background-color:grey;">
-    <h1 style="color:blue; text-align:center">My University Name</h1>
-    <h2 style="text-align:center">Website Development</h2>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Time App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 
-    <p>We <span style="color:red;">will</span> learn:</p>
-    <ul style="list-style-type:square;">
-      <li><b>HTML</b></li>
-      <li><u>CSS</u></li>
-      <li><i>JavaScript</i></li>
-    </ul>
-  </body>
+<body>
+
+    <header>
+        <h1>Global Time App</h1>
+
+        <div class="theme-toggle">
+            <label class="switch">
+                <input type="checkbox" id="themeSwitch">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </header>
+
+    <main>
+
+        <section class="controls">
+            <select id="citySelect">
+                <option value="" disabled selected>Select a city</option>
+                <option value="America/New_York">New York</option>
+                <option value="America/Los_Angeles">Los Angeles</option>
+                <option value="America/Chicago">Chicago</option>
+                <option value="Europe/London">London</option>
+                <option value="Europe/Paris">Paris</option>
+                <option value="Asia/Dubai">Dubai</option>
+                <option value="Asia/Tokyo">Tokyo</option>
+                <option value="Asia/Beirut">Beirut</option>
+                <option value="Australia/Sydney">Sydney</option>
+            </select>
+
+            <button id="addCityBtn">Add City</button>
+        </section>
+
+        <section class="clocks-container" id="clocksContainer">
+            <!-- City clocks will be dynamically added here -->
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
 </html>

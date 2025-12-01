@@ -40,15 +40,16 @@
                 <div class="search-card glass-card">
                     <h3>Add a City</h3>
                     <div class="autocomplete-container">
-                        <input type="text" id="city-search" placeholder="Search city or country..." autocomplete="off">
-                        <ul id="suggestions-list" class="suggestions-list"></ul>
+                        <select id="city-select" class="input-field">
+                            <option value="" disabled selected>Select a city to add...</option>
+                        </select>
                         <button id="add-city-btn" class="main-btn" disabled>Add Time</button>
                     </div>
                 </div>
             </div>
 
             <div id="city-clocks" class="city-clocks">
-                </div>
+            </div>
         </section>
 
         <section class="event-planner-section">

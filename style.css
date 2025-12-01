@@ -1,20 +1,19 @@
 /* Base Styling and Variables - Light Mode Default */
 :root {
-    --color-primary: #007aff; /* Apple Blue */
+    --color-primary: #007aff; 
     --color-secondary: #8e8e93;
     --color-text-dark: #1d1d1f;
     --color-text-light: #f5f5f7;
     --color-bg-dark: #1f2025;
-    --color-bg-light: #ffffff; /* Pure white background */
+    --color-bg-light: #ffffff; 
     --color-glass-dark: rgba(255, 255, 255, 0.08);
-    --color-glass-light: rgba(255, 255, 255, 0.8); /* Highly transparent white for light mode */
-    --color-shadow: rgba(0, 0, 0, 0.08); /* Very soft shadow */
+    --color-glass-light: rgba(255, 255, 255, 0.8); 
+    --color-shadow: rgba(0, 0, 0, 0.08); 
     --font-family: 'Inter', sans-serif;
     --transition-speed: 0.3s;
     --border-radius-large: 16px;
     --border-radius-small: 10px;
     
-    /* Default is Light Theme */
     --text-color: var(--color-text-dark);
     --background-color: var(--color-bg-light);
     --card-background: var(--color-glass-light);
@@ -51,7 +50,7 @@ body {
     padding: 20px;
 }
 
-/* --- Hero Section (Minimalistic) --- */
+/* --- Hero Section --- */
 .hero-section {
     padding: 60px 20px 40px;
     text-align: center;
@@ -74,7 +73,7 @@ body:not(.light-mode) .hero-content h1 {
     margin-top: 5px;
 }
 
-/* --- Glassmorphism Card Style (Apple Frosted Look) --- */
+/* --- Glassmorphism Card Style --- */
 .glass-card {
     background: var(--card-background);
     border-radius: var(--border-radius-large);
@@ -100,8 +99,9 @@ body:not(.light-mode) .hero-content h1 {
 }
 
 .search-and-map {
+    min-height: 400px; 
     display: grid;
-    grid-template-columns: 2fr 1fr; /* Map larger than search */
+    grid-template-columns: 2fr 1fr; 
     gap: 20px;
 }
 
@@ -163,38 +163,12 @@ body:not(.light-mode) .hero-content h1 {
     cursor: not-allowed;
 }
 
-/* --- Autocomplete/Search Styles --- */
+/* --- Autocomplete/Search Styles (Renamed to generic container) --- */
 .autocomplete-container {
     position: relative;
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
-
-.suggestions-list {
-    list-style: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    background: var(--card-background);
-    border: 1px solid var(--card-border);
-    border-radius: var(--border-radius-small);
-    max-height: 200px;
-    overflow-y: auto;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    margin-top: 5px;
-}
-
-.suggestions-list li {
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.suggestions-list li:hover {
-    background-color: rgba(0, 122, 255, 0.1);
 }
 
 /* --- Clock Cards --- */
@@ -222,7 +196,7 @@ body:not(.light-mode) .hero-content h1 {
 }
 .time-card .remove-city-btn:hover {
     opacity: 1;
-    color: #ff3b30; /* Apple Red */
+    color: #ff3b30; 
 }
 
 .time-card .city-name {
@@ -240,7 +214,7 @@ body:not(.light-mode) .hero-content h1 {
 
 .time-card .time-display {
     font-size: 3.5rem;
-    font-weight: 800; /* Extra bold for time */
+    font-weight: 800; 
     letter-spacing: -1px;
     color: var(--color-text-dark);
 }
@@ -257,7 +231,8 @@ body:not(.light-mode) .time-card .time-display {
 
 /* --- World Map (Leaflet) --- */
 .world-map {
-    height: 350px;
+    height: 100%; 
+    min-height: 350px;
     border-radius: var(--border-radius-small);
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
 }
@@ -281,7 +256,7 @@ body:not(.light-mode) .time-card .time-display {
 .conversion-result-item {
     padding: 12px 15px;
     margin-bottom: 8px;
-    background-color: rgba(0, 122, 255, 0.05); /* Very light blue background */
+    background-color: rgba(0, 122, 255, 0.05); 
     border-radius: var(--border-radius-small);
     border-left: 3px solid var(--color-primary);
     transition: background-color 0.2s;
@@ -329,4 +304,11 @@ footer {
     margin-top: 40px;
     color: var(--color-secondary);
     font-size: 0.85rem;
+}
+
+/* Responsive Styles */
+@media (max-width: 900px) {
+    .search-and-map {
+        grid-template-columns: 1fr;
+    }
 }

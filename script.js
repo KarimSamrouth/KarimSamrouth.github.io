@@ -1,6 +1,4 @@
-// --- GLOBAL DATA & CONSTANTS ---
 const CITY_TIMEZONES = [
-    // Added Lat/Lng for map functionality
     { city: 'London', country: 'UK', timezone: 'Europe/London', flag: '🇬🇧', lat: 51.5, lng: 0.12 },
     { city: 'New York', country: 'USA', timezone: 'America/New_York', flag: '🇺🇸', lat: 40.71, lng: -74.00 },
     { city: 'Tokyo', country: 'Japan', timezone: 'Asia/Tokyo', flag: '🇯🇵', lat: 35.68, lng: 139.75 },
@@ -20,20 +18,16 @@ let savedCities = JSON.parse(localStorage.getItem('chronoGlobeCities')) || [
     'Asia/Tokyo',
 ];
 
-// --- DOM ELEMENTS ---
 const cityClocksContainer = document.getElementById('city-clocks');
 const themeToggleButton = document.getElementById('theme-toggle');
-const citySearchInput = document.getElementById('city-search');
-const suggestionsList = document.getElementById('suggestions-list');
+const citySelect = document.getElementById('city-select'); 
 const addCityButton = document.getElementById('add-city-btn');
 const eventTimeFromSelect = document.getElementById('event-timezone-from');
 const eventDateTimeInput = document.getElementById('event-datetime');
 const convertTimeButton = document.getElementById('convert-time-btn');
 const conversionResultsDiv = document.getElementById('conversion-results');
 const worldMapDiv = document.getElementById('world-map');
-let map; // Variable to hold the Leaflet map instance
-
-// --- TIME FORMATTING UTILITIES ---
+let map; 
 
 function formatTime(timezone) {
     const now = new Date();
@@ -57,9 +51,6 @@ function formatTime(timezone) {
 
     return { timeString, dateString, tzShort };
 }
-
-
-// --- CORE FUNCTIONS (CITY CLOCKS) ---
 
 function renderCityCard(timezone) {
     const cityData = CITY_TIMEZONES.find(c => c.timezone === timezone);
@@ -107,8 +98,7 @@ function addCity(timezone) {
         populateEventTimezoneSelect();
         addMarkerToMap(CITY_TIMEZONES.find(c => c.timezone === timezone));
     }
-    citySearchInput.value = '';
-    suggestionsList.innerHTML = '';
+    citySelect.value = '';
     addCityButton.disabled = true;
     addCityButton.dataset.timezone = '';
 }
@@ -119,12 +109,8 @@ function removeCity(timezone) {
     document.querySelector(`[data-timezone="${timezone}"]`).remove();
     populateEventTimezoneSelect();
     
-    // Simple way to remove marker: re-initialize the map markers
     initializeMap(); 
 }
-
-
-// --- THEME TOGGLE ---
 
 function toggleTheme() {
     document.body.classList.toggle('light-mode');
@@ -147,58 +133,30 @@ function loadTheme() {
     }
 }
 
-
-// --- CITY SEARCH AND AUTOCOMPLETE ---
-
-function filterCities(query) {
-    if (query.length < 2) return [];
-    const lowerCaseQuery = query.toLowerCase();
-    return CITY_TIMEZONES
-        .filter(c => c.city.toLowerCase().includes(lowerCaseQuery) || c.country.toLowerCase().includes(lowerCaseQuery))
-        .sort((a, b) => a.city.localeCompare(b.city));
-}
-
-function handleSearchInput() {
-    const query = citySearchInput.value.trim();
-    suggestionsList.innerHTML = '';
-    addCityButton.disabled = true;
-
-    if (query.length === 0) return;
-
-    const results = filterCities(query);
+function populateCitySelect() {
+    citySelect.innerHTML = '<option value="" disabled selected>Select a city to add...</option>';
     
-    if (results.length > 0) {
-        results.forEach(city => {
-            const li = document.createElement('li');
-            li.textContent = `${city.flag} ${city.city}, ${city.country} (${city.timezone.split('/').pop().replace('_', ' ')})`;
-            li.dataset.timezone = city.timezone;
-            suggestionsList.appendChild(li);
+    CITY_TIMEZONES
+        .filter(city => !savedCities.includes(city.timezone))
+        .sort((a, b) => a.city.localeCompare(b.city))
+        .forEach(city => {
+            const option = document.createElement('option');
+            option.value = city.timezone;
+            option.textContent = `${city.flag} ${city.city}, ${city.country}`;
+            citySelect.appendChild(option);
         });
-    } else {
-        const li = document.createElement('li');
-        li.textContent = 'No cities found.';
-        li.style.opacity = 0.6;
-        suggestionsList.appendChild(li);
-    }
 }
 
-function handleSuggestionClick(event) {
-    const li = event.target.closest('li');
-    if (li && li.dataset.timezone) {
-        const timezone = li.dataset.timezone;
-        const cityData = CITY_TIMEZONES.find(c => c.timezone === timezone);
-
-        citySearchInput.value = `${cityData.city}, ${cityData.country}`; 
-        
+function handleCitySelectChange() {
+    const selectedTimezone = citySelect.value;
+    if (selectedTimezone) {
         addCityButton.disabled = false;
-        addCityButton.dataset.timezone = timezone;
-        
-        suggestionsList.innerHTML = ''; 
+        addCityButton.dataset.timezone = selectedTimezone;
+    } else {
+        addCityButton.disabled = true;
+        addCityButton.dataset.timezone = '';
     }
 }
-
-
-// --- EVENT TIME CONVERSION ---
 
 function populateEventTimezoneSelect() {
     eventTimeFromSelect.innerHTML = ''; 
@@ -234,7 +192,6 @@ function convertEventTime() {
         return;
     }
 
-    // Convert the event time to UTC based on the 'fromTimezone'
     const eventTimeUTC = new Date(eventDate.toLocaleString('en-US', { timeZone: fromTimezone, timeZoneName: 'short' }));
 
     conversionResultsDiv.innerHTML = '<h4>Converted Times:</h4>';
@@ -270,19 +227,14 @@ function convertEventTime() {
     });
 }
 
-
-// --- INTERACTIVE MAP (LEAFLET) ---
-
 function addMarkerToMap(cityData) {
     if (!cityData.lat || !cityData.lng) return;
 
     const marker = L.marker([cityData.lat, cityData.lng]).addTo(map);
 
-    // Create a time-display popup
     const popup = L.popup({ closeButton: false, autoClose: false, className: 'time-popup' });
     let popupContent = L.DomUtil.create('div', 'time-popup-content');
     
-    // Function to update the popup content every second
     const updatePopupTime = () => {
         const { timeString, dateString, tzShort } = formatTime(cityData.timezone);
         popupContent.innerHTML = `
@@ -294,98 +246,71 @@ function addMarkerToMap(cityData) {
     };
 
     updatePopupTime();
-    setInterval(updatePopupTime, 1000); // Keep the popup time live
+    setInterval(updatePopupTime, 1000); 
 
     marker.bindPopup(popup);
 
-    // Custom hover logic for time display
     marker.on('mouseover', function (e) {
         this.openPopup();
     });
     marker.on('mouseout', function (e) {
-        // Only close if the mouse leaves the marker
-        // If you want it to close only when the mouse leaves the popup too, 
-        // this logic would be more complex, but this covers the core requirement.
         this.closePopup();
     });
     
     marker.on('click', function(e) {
-        // When clicked, add the city to the saved list if it's not already there
         if (!savedCities.includes(cityData.timezone)) {
             addCity(cityData.timezone);
+            populateCitySelect(); 
         }
     });
 }
 
 function initializeMap() {
-    // Check if map is already initialized and remove it to prevent errors
     if (map) {
         map.remove();
     }
     
-    // Initialize the map centered on the world
     map = L.map('world-map').setView([20, 0], 2);
 
-    // Add a tile layer (OpenStreetMap for light, clean aesthetic)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
-    // Add markers for all saved cities
-    savedCities.forEach(timezone => {
-        const cityData = CITY_TIMEZONES.find(c => c.timezone === timezone);
-        if (cityData) {
-            addMarkerToMap(cityData);
-        }
+    CITY_TIMEZONES.forEach(cityData => {
+        addMarkerToMap(cityData);
     });
-
-    // Add markers for all other available cities, making them clickable
-    CITY_TIMEZONES
-        .filter(c => !savedCities.includes(c.timezone))
-        .forEach(cityData => {
-            addMarkerToMap(cityData);
-        });
 }
-
-
-// --- EVENT LISTENERS & INITIALIZATION ---
 
 document.addEventListener('DOMContentLoaded', () => {
     loadTheme();
     initializeClocks();
     populateEventTimezoneSelect();
-    initializeMap(); // Initialize the map on load
+    populateCitySelect(); 
+    initializeMap(); 
 
-    // Event listener for adding cities
     addCityButton.addEventListener('click', () => {
         const timezone = addCityButton.dataset.timezone;
         if (timezone) {
             addCity(timezone);
+            populateCitySelect(); 
         }
     });
 
-    // Event listener for removing cities
     cityClocksContainer.addEventListener('click', (e) => {
         const removeBtn = e.target.closest('.remove-city-btn');
         if (removeBtn) {
             removeCity(removeBtn.dataset.timezone);
+            populateCitySelect(); 
         }
     });
     
-    // Theme Toggle
     themeToggleButton.addEventListener('click', toggleTheme);
     
-    // Autocomplete input listener
-    citySearchInput.addEventListener('input', handleSearchInput);
+    citySelect.addEventListener('change', handleCitySelectChange);
 
-    // Suggestion click listener
-    suggestionsList.addEventListener('click', handleSuggestionClick);
-
-    // Event time conversion listener
     convertTimeButton.addEventListener('click', convertEventTime);
     
-    // Map resizing fix for Leaflet
     setTimeout(() => {
         if (map) {
             map.invalidateSize();

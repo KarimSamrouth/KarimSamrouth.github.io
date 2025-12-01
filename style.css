@@ -548,4 +548,39 @@
     background: #f1f5f9;
     color: #0f172a;
   }
-    
+/* Fix city labels for dark mode */
+.dark .map-city-label {
+    fill: #e5e7eb !important;
+  }
+  
+  /* Tooltip */
+  .map-tooltip {
+    position: absolute;
+    background: #0f172a;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+    white-space: nowrap;
+    z-index: 999;
+  }
+  .dark .map-tooltip {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+  
+  /* City label styling */
+  .map-city-label {
+    fill: #0f172a;
+    font-size: 11px;
+    user-select: none;
+  }
+  
+  /* Dropdown flags */
+  select option {
+    font-size: 14px;
+  }
+      

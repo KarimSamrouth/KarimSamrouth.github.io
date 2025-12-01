@@ -20,7 +20,8 @@ let savedCities = JSON.parse(localStorage.getItem('chronoGlobeCities')) || [
 
 const cityClocksContainer = document.getElementById('city-clocks');
 const themeToggleButton = document.getElementById('theme-toggle');
-const citySelect = document.getElementById('city-select'); 
+const citySearchInput = document.getElementById('city-search'); 
+const suggestionsList = document.getElementById('suggestions-list'); 
 const addCityButton = document.getElementById('add-city-btn');
 const eventTimeFromSelect = document.getElementById('event-timezone-from');
 const eventDateTimeInput = document.getElementById('event-datetime');
@@ -96,9 +97,10 @@ function addCity(timezone) {
         renderCityCard(timezone);
         updateClocks();
         populateEventTimezoneSelect();
-        addMarkerToMap(CITY_TIMEZONES.find(c => c.timezone === timezone));
+        addMarkerToMap(CITY_TIMEZONES.find(c => c.timezone === timezone), true); 
     }
-    citySelect.value = '';
+    citySearchInput.value = '';
+    suggestionsList.innerHTML = '';
     addCityButton.disabled = true;
     addCityButton.dataset.timezone = '';
 }
@@ -133,28 +135,50 @@ function loadTheme() {
     }
 }
 
-function populateCitySelect() {
-    citySelect.innerHTML = '<option value="" disabled selected>Select a city to add...</option>';
-    
-    CITY_TIMEZONES
-        .filter(city => !savedCities.includes(city.timezone))
-        .sort((a, b) => a.city.localeCompare(b.city))
-        .forEach(city => {
-            const option = document.createElement('option');
-            option.value = city.timezone;
-            option.textContent = `${city.flag} ${city.city}, ${city.country}`;
-            citySelect.appendChild(option);
-        });
+function filterCities(query) {
+    if (query.length < 2) return [];
+    const lowerCaseQuery = query.toLowerCase();
+    return CITY_TIMEZONES
+        .filter(c => c.city.toLowerCase().includes(lowerCaseQuery) || c.country.toLowerCase().includes(lowerCaseQuery))
+        .sort((a, b) => a.city.localeCompare(b.city));
 }
 
-function handleCitySelectChange() {
-    const selectedTimezone = citySelect.value;
-    if (selectedTimezone) {
-        addCityButton.disabled = false;
-        addCityButton.dataset.timezone = selectedTimezone;
+function handleSearchInput() {
+    const query = citySearchInput.value.trim();
+    suggestionsList.innerHTML = '';
+    addCityButton.disabled = true;
+
+    if (query.length === 0) return;
+
+    const results = filterCities(query);
+    
+    if (results.length > 0) {
+        results.forEach(city => {
+            const li = document.createElement('li');
+            li.textContent = `${city.flag} ${city.city}, ${city.country} (${city.timezone.split('/').pop().replace('_', ' ')})`;
+            li.dataset.timezone = city.timezone;
+            suggestionsList.appendChild(li);
+        });
     } else {
-        addCityButton.disabled = true;
-        addCityButton.dataset.timezone = '';
+        const li = document.createElement('li');
+        li.textContent = 'No cities found.';
+        li.style.opacity = 0.6;
+        suggestionsList.appendChild(li);
+    }
+}
+
+function handleSuggestionClick(event) {
+    const li = event.target.closest('li');
+    if (li && li.dataset.timezone) {
+        const timezone = li.dataset.timezone;
+        const cityData = CITY_TIMEZONES.find(c => c.timezone === timezone);
+
+        citySearchInput.value = `${cityData.city}, ${cityData.country}`; 
+        
+        addCityButton.disabled = false;
+        addCityButton.dataset.timezone = timezone;
+        
+        suggestionsList.innerHTML = ''; 
     }
 }
 
@@ -227,7 +251,7 @@ function convertEventTime() {
     });
 }
 
-function addMarkerToMap(cityData) {
+function addMarkerToMap(cityData, focus = false) {
     if (!cityData.lat || !cityData.lng) return;
 
     const marker = L.marker([cityData.lat, cityData.lng]).addTo(map);
@@ -260,9 +284,12 @@ function addMarkerToMap(cityData) {
     marker.on('click', function(e) {
         if (!savedCities.includes(cityData.timezone)) {
             addCity(cityData.timezone);
-            populateCitySelect(); 
         }
     });
+
+    if (focus) {
+        map.setView([cityData.lat, cityData.lng], 5);
+    }
 }
 
 function initializeMap() {
@@ -286,14 +313,12 @@ document.addEventListener('DOMContentLoaded', () => {
     loadTheme();
     initializeClocks();
     populateEventTimezoneSelect();
-    populateCitySelect(); 
     initializeMap(); 
 
     addCityButton.addEventListener('click', () => {
         const timezone = addCityButton.dataset.timezone;
         if (timezone) {
             addCity(timezone);
-            populateCitySelect(); 
         }
     });
 
@@ -301,13 +326,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const removeBtn = e.target.closest('.remove-city-btn');
         if (removeBtn) {
             removeCity(removeBtn.dataset.timezone);
-            populateCitySelect(); 
         }
     });
     
     themeToggleButton.addEventListener('click', toggleTheme);
     
-    citySelect.addEventListener('change', handleCitySelectChange);
+    citySearchInput.addEventListener('input', handleSearchInput);
+
+    suggestionsList.addEventListener('click', handleSuggestionClick);
 
     convertTimeButton.addEventListener('click', convertEventTime);
     

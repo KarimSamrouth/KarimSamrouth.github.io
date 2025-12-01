@@ -1,4 +1,3 @@
-/* Base Styling and Variables - Light Mode Default */
 :root {
     --color-primary: #007aff; 
     --color-secondary: #8e8e93;
@@ -20,7 +19,6 @@
     --card-border: rgba(0, 0, 0, 0.05);
 }
 
-/* Dark Theme Variables */
 body:not(.light-mode) {
     --text-color: var(--color-text-light);
     --background-color: #1a1a1c;
@@ -29,7 +27,6 @@ body:not(.light-mode) {
     --color-shadow: rgba(0, 0, 0, 0.5);
 }
 
-/* Global Reset and Typography */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -50,7 +47,6 @@ body {
     padding: 20px;
 }
 
-/* --- Hero Section --- */
 .hero-section {
     padding: 60px 20px 40px;
     text-align: center;
@@ -73,7 +69,6 @@ body:not(.light-mode) .hero-content h1 {
     margin-top: 5px;
 }
 
-/* --- Glassmorphism Card Style --- */
 .glass-card {
     background: var(--card-background);
     border-radius: var(--border-radius-large);
@@ -91,7 +86,6 @@ body:not(.light-mode) .hero-content h1 {
     transform: translateY(-2px);
 }
 
-/* --- Layout Sections --- */
 .time-management-section {
     display: flex;
     flex-direction: column;
@@ -123,7 +117,6 @@ body:not(.light-mode) .hero-content h1 {
     font-weight: 600;
 }
 
-/* --- Forms and Inputs --- */
 .input-field {
     width: 100%;
     padding: 12px;
@@ -163,15 +156,39 @@ body:not(.light-mode) .hero-content h1 {
     cursor: not-allowed;
 }
 
-/* --- Autocomplete/Search Styles (Renamed to generic container) --- */
 .autocomplete-container {
     position: relative;
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
+.suggestions-list {
+    list-style: none;
+    position: absolute;
+    top: calc(100% - 10px); 
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--card-background);
+    border: 1px solid var(--card-border);
+    border-radius: var(--border-radius-small);
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 5px;
+    padding: 0;
+}
 
-/* --- Clock Cards --- */
+.suggestions-list li {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.suggestions-list li:hover {
+    background-color: rgba(0, 122, 255, 0.1);
+}
+
 .time-card {
     display: flex;
     flex-direction: column;
@@ -229,15 +246,13 @@ body:not(.light-mode) .time-card .time-display {
     margin-top: -5px;
 }
 
-/* --- World Map (Leaflet) --- */
 .world-map {
     height: 100%; 
-    min-height: 350px;
+    min-height: 350px; 
     border-radius: var(--border-radius-small);
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
-/* --- Event Planner --- */
 .event-inputs {
     display: flex;
     gap: 10px;
@@ -267,7 +282,6 @@ body:not(.light-mode) .time-card .time-display {
     margin-left: 5px;
 }
 
-/* --- Theme Toggle --- */
 .theme-toggle {
     position: fixed;
     top: 25px;
@@ -288,7 +302,6 @@ body:not(.light-mode) .time-card .time-display {
     background-color: rgba(0, 122, 255, 0.1);
 }
 
-/* Toggle Icons */
 .light-mode .theme-toggle .fa-sun {
     display: none;
 }
@@ -297,7 +310,6 @@ body:not(.light-mode) .theme-toggle .fa-moon {
     color: white;
 }
 
-/* --- Footer --- */
 footer {
     text-align: center;
     padding: 20px;
@@ -306,7 +318,6 @@ footer {
     font-size: 0.85rem;
 }
 
-/* Responsive Styles */
 @media (max-width: 900px) {
     .search-and-map {
         grid-template-columns: 1fr;

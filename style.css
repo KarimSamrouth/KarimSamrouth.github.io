@@ -1,30 +1,36 @@
+/* Base Styling and Variables - Light Mode Default */
 :root {
-    --color-primary: #007bff;
-    --color-secondary: #6c757d;
-    --color-text-dark: #e9ecef;
-    --color-text-light: #212529;
+    --color-primary: #007aff; /* Apple Blue */
+    --color-secondary: #8e8e93;
+    --color-text-dark: #1d1d1f;
+    --color-text-light: #f5f5f7;
     --color-bg-dark: #1f2025;
-    --color-bg-light: #f8f9fa;
+    --color-bg-light: #ffffff; /* Pure white background */
     --color-glass-dark: rgba(255, 255, 255, 0.08);
-    --color-glass-light: rgba(255, 255, 255, 0.4);
-    --color-shadow: rgba(0, 0, 0, 0.3);
-    --font-family: 'Poppins', sans-serif;
+    --color-glass-light: rgba(255, 255, 255, 0.8); /* Highly transparent white for light mode */
+    --color-shadow: rgba(0, 0, 0, 0.08); /* Very soft shadow */
+    --font-family: 'Inter', sans-serif;
     --transition-speed: 0.3s;
+    --border-radius-large: 16px;
+    --border-radius-small: 10px;
     
+    /* Default is Light Theme */
     --text-color: var(--color-text-dark);
-    --background-color: var(--color-bg-dark);
-    --card-background: var(--color-glass-dark);
-    --card-border: rgba(255, 255, 255, 0.1);
-}
-
-body.light-mode {
-    --text-color: var(--color-text-light);
     --background-color: var(--color-bg-light);
     --card-background: var(--color-glass-light);
-    --card-border: rgba(0, 0, 0, 0.1);
-    --color-shadow: rgba(0, 0, 0, 0.1);
+    --card-border: rgba(0, 0, 0, 0.05);
 }
 
+/* Dark Theme Variables */
+body:not(.light-mode) {
+    --text-color: var(--color-text-light);
+    --background-color: #1a1a1c;
+    --card-background: rgba(255, 255, 255, 0.08);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --color-shadow: rgba(0, 0, 0, 0.5);
+}
+
+/* Global Reset and Typography */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -40,49 +46,53 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 20px;
 }
 
+/* --- Hero Section (Minimalistic) --- */
 .hero-section {
-    background: linear-gradient(135deg, var(--color-primary) 0%, #00c6ff 100%);
-    color: white;
-    padding: 80px 20px;
+    padding: 60px 20px 40px;
     text-align: center;
-    box-shadow: 0 4px 10px var(--color-shadow);
-    margin-bottom: 40px;
-    animation: fadeInDown 1s ease-out;
+    border-bottom: 1px solid var(--card-border);
 }
 
 .hero-content h1 {
-    font-size: 3.5rem;
-    margin-bottom: 10px;
+    font-size: 3rem;
     font-weight: 700;
+    color: var(--color-text-dark);
+    transition: color var(--transition-speed);
+}
+body:not(.light-mode) .hero-content h1 {
+    color: var(--color-text-light);
 }
 
-.hero-content p {
-    font-size: 1.2rem;
-    opacity: 0.9;
+.tagline {
+    font-size: 1.1rem;
+    color: var(--color-secondary);
+    margin-top: 5px;
 }
 
+/* --- Glassmorphism Card Style (Apple Frosted Look) --- */
 .glass-card {
     background: var(--card-background);
-    border-radius: 16px;
-    box-shadow: 0 4px 30px var(--color-shadow);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    border-radius: var(--border-radius-large);
+    box-shadow: 0 5px 20px var(--color-shadow);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--card-border);
     padding: 30px;
     margin-bottom: 20px;
-    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .glass-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 30px var(--color-shadow);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
 }
 
+/* --- Layout Sections --- */
 .time-management-section {
     display: flex;
     flex-direction: column;
@@ -91,7 +101,7 @@ body {
 
 .search-and-map {
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 2fr 1fr; /* Map larger than search */
     gap: 20px;
 }
 
@@ -99,30 +109,36 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
+    margin-top: 20px;
+}
+
+.event-planner-section {
+    margin-top: 40px;
 }
 
 .event-planner-section h2 {
     text-align: center;
     margin-bottom: 20px;
     color: var(--color-primary);
+    font-weight: 600;
 }
 
+/* --- Forms and Inputs --- */
 .input-field {
     width: 100%;
     padding: 12px;
-    margin-bottom: 10px;
     border: 1px solid var(--card-border);
-    border-radius: 8px;
+    border-radius: var(--border-radius-small);
     background-color: var(--card-background);
     color: var(--text-color);
     font-size: 1rem;
-    transition: border-color var(--transition-speed);
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
 }
 
 .input-field:focus {
     outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
 }
 
 .main-btn {
@@ -130,35 +146,29 @@ body {
     color: white;
     border: none;
     padding: 12px 20px;
-    border-radius: 8px;
+    border-radius: var(--border-radius-small);
     cursor: pointer;
     font-size: 1rem;
-    font-weight: 600;
-    transition: background-color var(--transition-speed), transform 0.1s;
+    font-weight: 500;
+    transition: background-color var(--transition-speed), opacity 0.2s;
 }
 
 .main-btn:hover {
-    background-color: #0056b3;
-}
-
-.main-btn:active {
-    transform: scale(0.98);
+    background-color: #0066cc;
 }
 
 .main-btn:disabled {
-    background-color: var(--color-secondary);
+    background-color: #e9e9e9;
+    color: #a0a0a0;
     cursor: not-allowed;
 }
 
+/* --- Autocomplete/Search Styles --- */
 .autocomplete-container {
     position: relative;
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
-
-#city-search {
-    width: 100%;
 }
 
 .suggestions-list {
@@ -167,91 +177,92 @@ body {
     top: 100%;
     left: 0;
     right: 0;
-    z-index: 100;
+    z-index: 1000;
     background: var(--card-background);
     border: 1px solid var(--card-border);
-    border-radius: 0 0 8px 8px;
+    border-radius: var(--border-radius-small);
     max-height: 200px;
     overflow-y: auto;
-    box-shadow: 0 4px 8px var(--color-shadow);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 5px;
 }
 
 .suggestions-list li {
     padding: 10px 15px;
     cursor: pointer;
-    border-bottom: 1px solid var(--card-border);
     transition: background-color 0.2s;
 }
 
 .suggestions-list li:hover {
-    background-color: rgba(0, 123, 255, 0.1);
+    background-color: rgba(0, 122, 255, 0.1);
 }
 
+/* --- Clock Cards --- */
 .time-card {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    text-align: center;
+    text-align: left;
     position: relative;
-    padding: 20px;
-    animation: fadeInUp 0.5s ease-out;
+    padding: 25px;
+    height: 100%;
+    overflow: hidden;
 }
 
-.time-card .flag-icon {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-}
-
-.time-card .city-name {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 5px;
-}
-
-.time-card .time-display {
-    font-size: 3rem;
-    font-weight: 700;
-    color: var(--color-primary);
-    letter-spacing: -2px;
-}
-
-.time-card .date-display {
-    font-size: 0.9rem;
-    opacity: 0.7;
-    margin-bottom: 15px;
-}
-
-.remove-city-btn {
+.time-card .remove-city-btn {
     position: absolute;
     top: 10px;
     right: 10px;
     background: none;
     border: none;
     color: var(--color-secondary);
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     cursor: pointer;
-    transition: color 0.2s;
+    opacity: 0.5;
+    transition: opacity 0.2s, color 0.2s;
+}
+.time-card .remove-city-btn:hover {
+    opacity: 1;
+    color: #ff3b30; /* Apple Red */
 }
 
-.remove-city-btn:hover {
-    color: red;
-}
-
-.world-map {
-    height: 300px;
+.time-card .city-name {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 5px;
     display: flex;
-    justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 12px;
+    gap: 8px;
 }
 
-.map-placeholder {
-    opacity: 0.6;
-    font-style: italic;
-    text-align: center;
+.time-card .flag-icon {
+    font-size: 1.5rem;
 }
 
+.time-card .time-display {
+    font-size: 3.5rem;
+    font-weight: 800; /* Extra bold for time */
+    letter-spacing: -1px;
+    color: var(--color-text-dark);
+}
+body:not(.light-mode) .time-card .time-display {
+    color: var(--color-text-light);
+}
+
+.time-card .date-display {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--color-secondary);
+    margin-top: -5px;
+}
+
+/* --- World Map (Leaflet) --- */
+.world-map {
+    height: 350px;
+    border-radius: var(--border-radius-small);
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Event Planner --- */
 .event-inputs {
     display: flex;
     gap: 10px;
@@ -259,7 +270,7 @@ body {
 }
 
 .event-inputs .input-field {
-    margin-bottom: 0;
+    flex-grow: 1;
 }
 
 .conversion-results {
@@ -267,87 +278,55 @@ body {
     padding-top: 20px;
 }
 
-.conversion-results h4 {
-    color: var(--color-primary);
-    margin-top: 15px;
-}
-
 .conversion-result-item {
-    padding: 10px;
-    margin-bottom: 10px;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    background-color: rgba(0, 122, 255, 0.05); /* Very light blue background */
+    border-radius: var(--border-radius-small);
     border-left: 3px solid var(--color-primary);
-    background-color: var(--card-background);
-    border-radius: 5px;
-    animation: slideInLeft 0.3s ease-out;
+    transition: background-color 0.2s;
 }
 
 .conversion-result-item span {
     font-weight: 600;
+    margin-left: 5px;
 }
 
+/* --- Theme Toggle --- */
 .theme-toggle {
     position: fixed;
-    top: 20px;
-    right: 20px;
+    top: 25px;
+    right: 25px;
     background: var(--card-background);
     border: 1px solid var(--card-border);
-    color: var(--text-color);
-    width: 45px;
-    height: 45px;
+    color: var(--color-primary);
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     cursor: pointer;
     z-index: 1000;
-    backdrop-filter: blur(5px);
-    transition: background-color var(--transition-speed), color var(--transition-speed);
+    box-shadow: 0 2px 10px var(--color-shadow);
+    transition: all var(--transition-speed);
 }
-
 .theme-toggle:hover {
-    background-color: rgba(0, 123, 255, 0.2);
+    background-color: rgba(0, 122, 255, 0.1);
 }
 
-body.light-mode .theme-toggle .fa-sun {
+/* Toggle Icons */
+.light-mode .theme-toggle .fa-sun {
     display: none;
 }
-
 body:not(.light-mode) .theme-toggle .fa-moon {
     display: none;
+    color: white;
 }
 
+/* --- Footer --- */
 footer {
     text-align: center;
     padding: 20px;
     margin-top: 40px;
-    border-top: 1px solid var(--card-border);
-    opacity: 0.6;
-}
-
-@keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideInLeft {
-    from { opacity: 0; transform: translateX(-20px); }
-    to { opacity: 1; transform: translateX(0); }
-}
-
-@media (max-width: 900px) {
-    .search-and-map {
-        grid-template-columns: 1fr;
-    }
-    .event-inputs {
-        flex-direction: column;
-    }
-    .hero-content h1 {
-        font-size: 2.5rem;
-    }
-    .time-card .time-display {
-        font-size: 2.5rem;
-    }
+    color: var(--color-secondary);
+    font-size: 0.85rem;
 }

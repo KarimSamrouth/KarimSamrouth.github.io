@@ -1,158 +1,312 @@
-// ==========================
-// FLAG + CITY DATA
-// ==========================
-const allCities = {
-    "Los Angeles": { zone: "America/Los_Angeles", flag: "🇺🇸" },
-    "New York": { zone: "America/New_York", flag: "🇺🇸" },
-    "London": { zone: "Europe/London", flag: "🇬🇧" },
-    "Paris": { zone: "Europe/Paris", flag: "🇫🇷" },
-    "Beirut": { zone: "Asia/Beirut", flag: "🇱🇧" },
-    "Dubai": { zone: "Asia/Dubai", flag: "🇦🇪" },
-    "Tokyo": { zone: "Asia/Tokyo", flag: "🇯🇵" },
-    "Sydney": { zone: "Australia/Sydney", flag: "🇦🇺" },
+document.addEventListener("DOMContentLoaded", () => {
+    // ==============================
+    // CITY DATA (one source of truth)
+    // ==============================
+    const CITY_DATA = [
+      { label: "Los Angeles", zone: "America/Los_Angeles", flag: "🇺🇸", gmt: "GMT-8/7" },
+      { label: "Chicago", zone: "America/Chicago", flag: "🇺🇸", gmt: "GMT-6/5" },
+      { label: "New York", zone: "America/New_York", flag: "🇺🇸", gmt: "GMT-5/4" },
+      { label: "London", zone: "Europe/London", flag: "🇬🇧", gmt: "GMT±0/1" },
+      { label: "Paris", zone: "Europe/Paris", flag: "🇫🇷", gmt: "GMT+1/2" },
+      { label: "Beirut", zone: "Asia/Beirut", flag: "🇱🇧", gmt: "GMT+2/3" },
+      { label: "Dubai", zone: "Asia/Dubai", flag: "🇦🇪", gmt: "GMT+4" },
+      { label: "Tokyo", zone: "Asia/Tokyo", flag: "🇯🇵", gmt: "GMT+9" },
+      { label: "Sydney", zone: "Australia/Sydney", flag: "🇦🇺", gmt: "GMT+10/11" }
+    ];
   
-    // Extra dropdown cities
-    "Toronto": { zone: "America/Toronto", flag: "🇨🇦" },
-    "Chicago": { zone: "America/Chicago", flag: "🇺🇸" },
-    "Mexico City": { zone: "America/Mexico_City", flag: "🇲🇽" },
-    "São Paulo": { zone: "America/Sao_Paulo", flag: "🇧🇷" },
-    "Cairo": { zone: "Africa/Cairo", flag: "🇪🇬" },
-    "Johannesburg": { zone: "Africa/Johannesburg", flag: "🇿🇦" },
-    "Istanbul": { zone: "Europe/Istanbul", flag: "🇹🇷" },
-    "Singapore": { zone: "Asia/Singapore", flag: "🇸🇬" },
-    "Hong Kong": { zone: "Asia/Hong_Kong", flag: "🇭🇰" },
-    "Seoul": { zone: "Asia/Seoul", flag: "🇰🇷" }
-  };
+    // ==============================
+    // ELEMENTS
+    // ==============================
+    const addCityBtn = document.getElementById("addCityBtn");
+    const citySelect = document.getElementById("citySelect");
+    const clocksContainer = document.getElementById("clocksContainer");
+    const themeSwitch = document.getElementById("themeSwitch");
   
-  // ==========================
-  // POPULATE DROPDOWNS
-  // ==========================
-  const citySelect = document.getElementById("citySelect");
-  const baseCitySelect = document.getElementById("baseCitySelect");
+    const baseCitySelect = document.getElementById("baseCitySelect");
+    const eventTimeInput = document.getElementById("eventTime");
+    const convertBtn = document.getElementById("convertBtn");
+    const resultsList = document.getElementById("resultsList");
   
-  for (const city in allCities) {
-    const zone = allCities[city].zone;
-    const flag = allCities[city].flag;
+    const mapDots = document.querySelectorAll(".map-city-dot");
   
-    const op1 = document.createElement("option");
-    op1.value = zone;
-    op1.textContent = `${flag} ${city}`;
-    citySelect.appendChild(op1);
+    const STORAGE_KEY_CITIES = "globalTimeApp_cities";
+    const STORAGE_KEY_THEME = "globalTimeApp_theme";
   
-    const op2 = document.createElement("option");
-    op2.value = zone;
-    op2.textContent = `${flag} ${city}`;
-    baseCitySelect.appendChild(op2);
-  }
+    // Active clock objects: { zone, element }
+    let activeClocks = [];
   
-  // ==========================
-  // CLOCK CARDS
-  // ==========================
-  function addClock(zone) {
-    const city = Object.keys(allCities).find(c => allCities[c].zone === zone);
-    const { flag } = allCities[city];
-  
-    const card = document.createElement("div");
-    card.className = "clock-card";
-    card.innerHTML = `
-      <div class="clock-header">
-        <div class="clock-title-group">
-          <span class="clock-title">${flag} ${city}</span>
-        </div>
-        <span class="clock-metadata">${zone}</span>
-      </div>
-      <div class="clock-time" data-zone="${zone}">--:--</div>
-      <button class="remove-btn">Remove</button>
-    `;
-  
-    card.querySelector(".remove-btn").onclick = () => card.remove();
-    document.getElementById("clocksContainer").appendChild(card);
-  }
-  
-  document.getElementById("addCityBtn").onclick = () => {
-    addClock(citySelect.value);
-  };
-  
-  setInterval(() => {
-    document.querySelectorAll(".clock-time").forEach(div => {
-      div.textContent = new Date().toLocaleTimeString("en-US", {
-        timeZone: div.dataset.zone,
-        hour: "2-digit",
-        minute: "2-digit"
-      });
-    });
-  }, 1000);
-  
-  // ==========================
-  // EVENT CONVERTER
-  // ==========================
-  document.getElementById("convertBtn").onclick = () => {
-    const baseZone = baseCitySelect.value;
-    const time = document.getElementById("eventTime").value;
-    const out = document.getElementById("resultsList");
-    out.innerHTML = "";
-    if (!time) return;
-  
-    const [h, m] = time.split(":");
-    const baseDate = new Date();
-    baseDate.setHours(h);
-    baseDate.setMinutes(m);
-  
-    for (const city in allCities) {
-      const { zone, flag } = allCities[city];
-  
-      const converted = baseDate.toLocaleTimeString("en-US", {
-        timeZone: zone,
-        hour: "2-digit",
-        minute: "2-digit"
+    // ==============================
+    // SELECT POPULATION
+    // ==============================
+    function populateCitySelects() {
+      // For dashboard select
+      citySelect.innerHTML = `<option value="" disabled selected>Select a city</option>`;
+      CITY_DATA.forEach(city => {
+        const opt = document.createElement("option");
+        opt.value = city.zone;
+        opt.textContent = `${city.flag} ${city.label}`;
+        citySelect.appendChild(opt);
       });
   
-      const li = document.createElement("li");
-      li.innerHTML = `
-        <span class="results-city">${flag} ${city}</span>
-        <span class="results-time">${converted}</span>
-      `;
-      out.appendChild(li);
+      // For converter base city
+      baseCitySelect.innerHTML = `<option value="" disabled selected>Select event city</option>`;
+      CITY_DATA.forEach(city => {
+        const opt = document.createElement("option");
+        opt.value = city.zone;
+        opt.textContent = `${city.flag} ${city.label}`;
+        baseCitySelect.appendChild(opt);
+      });
     }
-  };
   
-  // ==========================
-  // MAP TOOLTIP + CLICK
-  // ==========================
-  const tooltip = document.getElementById("mapTooltip");
+    populateCitySelects();
   
-  document.querySelectorAll(".map-city-dot").forEach(dot => {
-    dot.addEventListener("mousemove", e => {
-      const zone = dot.dataset.zone;
-      const city = Object.keys(allCities).find(c => allCities[c].zone === zone);
-      const flag = allCities[city].flag;
+    // ==============================
+    // LOCAL STORAGE HELPERS
+    // ==============================
+    function saveCities() {
+      const zones = activeClocks.map(c => c.zone);
+      localStorage.setItem(STORAGE_KEY_CITIES, JSON.stringify(zones));
+    }
   
-      const now = new Date().toLocaleTimeString("en-US", {
-        timeZone: zone,
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
+    function loadCities() {
+      const raw = localStorage.getItem(STORAGE_KEY_CITIES);
+      if (!raw) return;
+      try {
+        const zones = JSON.parse(raw);
+        zones.forEach(zone => createClockCard(zone));
+      } catch (e) {
+        console.warn("Could not parse saved cities", e);
+      }
+    }
+  
+    // ==============================
+    // THEME SETUP (persisted)
+    // ==============================
+    function applyTheme(theme) {
+      if (theme === "dark") {
+        document.body.classList.add("dark");
+        themeSwitch.checked = true;
+      } else {
+        document.body.classList.remove("dark");
+        themeSwitch.checked = false;
+      }
+    }
+  
+    // Load initial theme
+    const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
+    if (savedTheme) {
+      applyTheme(savedTheme);
+    } else {
+      applyTheme("light");
+    }
+  
+    themeSwitch.addEventListener("change", () => {
+      const theme = themeSwitch.checked ? "dark" : "light";
+      applyTheme(theme);
+      localStorage.setItem(STORAGE_KEY_THEME, theme);
+    });
+  
+    // ==============================
+    // CLOCK CARD CREATION
+    // ==============================
+    function createClockCard(zone) {
+      // Prevent duplicates
+      if (activeClocks.some(c => c.zone === zone)) {
+        alert("City is already on your dashboard.");
+        return;
+      }
+  
+      const cityInfo = CITY_DATA.find(c => c.zone === zone);
+      const label = cityInfo ? cityInfo.label : zone.split("/")[1]?.replace("_", " ") || zone;
+      const flag = cityInfo?.flag || "🌍";
+      const gmt = cityInfo?.gmt || "";
+  
+      const card = document.createElement("div");
+      card.className = "clock-card";
+  
+      const header = document.createElement("div");
+      header.className = "clock-header";
+  
+      const titleGroup = document.createElement("div");
+      titleGroup.className = "clock-title-group";
+  
+      const flagEl = document.createElement("span");
+      flagEl.className = "city-flag";
+      flagEl.textContent = flag;
+  
+      const title = document.createElement("div");
+      title.className = "clock-title";
+      title.textContent = label;
+  
+      const meta = document.createElement("div");
+      meta.className = "clock-metadata";
+      meta.textContent = gmt;
+  
+      titleGroup.appendChild(flagEl);
+      titleGroup.appendChild(title);
+  
+      header.appendChild(titleGroup);
+      header.appendChild(meta);
+  
+      const timeDisplay = document.createElement("div");
+      timeDisplay.className = "clock-time";
+  
+      const removeBtn = document.createElement("button");
+      removeBtn.className = "remove-btn";
+      removeBtn.textContent = "Remove";
+  
+      removeBtn.addEventListener("click", () => {
+        card.remove();
+        activeClocks = activeClocks.filter(c => c.zone !== zone);
+        saveCities();
       });
   
-      tooltip.style.left = e.pageX + "px";
-      tooltip.style.top = e.pageY - 15 + "px";
-      tooltip.style.opacity = 1;
-      tooltip.textContent = `${flag} ${city}: ${now}`;
+      card.appendChild(header);
+      card.appendChild(timeDisplay);
+      card.appendChild(removeBtn);
+  
+      clocksContainer.appendChild(card);
+  
+      activeClocks.push({
+        zone,
+        element: timeDisplay
+      });
+  
+      saveCities();
+    }
+  
+    // ==============================
+    // ADD CITY HANDLERS
+    // ==============================
+    addCityBtn.addEventListener("click", () => {
+      const zone = citySelect.value;
+      if (!zone) return;
+      createClockCard(zone);
     });
   
-    dot.addEventListener("mouseleave", () => {
-      tooltip.style.opacity = 0;
+    // From map clicks
+    mapDots.forEach(dot => {
+      dot.addEventListener("click", () => {
+        const zone = dot.getAttribute("data-zone");
+        if (!zone) return;
+        createClockCard(zone);
+      });
     });
   
-    dot.addEventListener("click", () => {
-      addClock(dot.dataset.zone);
+    // ==============================
+    // CLOCK TICK
+    // ==============================
+    function updateClocks() {
+      activeClocks.forEach(clock => {
+        const nowString = new Date().toLocaleString("en-US", {
+          timeZone: clock.zone,
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true
+        });
+        clock.element.textContent = nowString;
+      });
+    }
+  
+    updateClocks();
+    setInterval(updateClocks, 1000);
+  
+    // Restore saved cities after everything is ready
+    loadCities();
+  
+    // ==============================
+    // EVENT TIME CONVERTER
+    // ==============================
+    function parseTimeToMinutes(timeStr) {
+      const [h, m] = timeStr.split(":").map(Number);
+      if (Number.isNaN(h) || Number.isNaN(m)) return null;
+      return h * 60 + m;
+    }
+  
+    function formatMinutesToTime(mins) {
+      // Normalize to 0–1439
+      let total = ((mins % 1440) + 1440) % 1440;
+      const hours24 = Math.floor(total / 60);
+      const minutes = total % 60;
+  
+      const period = hours24 >= 12 ? "PM" : "AM";
+      const hours12 = hours24 % 12 === 0 ? 12 : hours24 % 12;
+  
+      const paddedMin = minutes.toString().padStart(2, "0");
+      const padded24h = hours24.toString().padStart(2, "0");
+  
+      return {
+        display: `${hours12}:${paddedMin} ${period}`,
+        debug24: `${padded24h}:${paddedMin}`
+      };
+    }
+  
+    function getOffsetMinutes(baseZone, targetZone) {
+      const now = new Date();
+  
+      const baseString = now.toLocaleString("en-GB", {
+        timeZone: baseZone,
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+      const targetString = now.toLocaleString("en-GB", {
+        timeZone: targetZone,
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+  
+      const [bh, bm] = baseString.split(":").map(Number);
+      const [th, tm] = targetString.split(":").map(Number);
+  
+      const baseMinutes = bh * 60 + bm;
+      const targetMinutes = th * 60 + tm;
+  
+      return targetMinutes - baseMinutes;
+    }
+  
+    convertBtn.addEventListener("click", () => {
+      const baseZone = baseCitySelect.value;
+      const timeStr = eventTimeInput.value;
+  
+      resultsList.innerHTML = "";
+  
+      if (!baseZone || !timeStr) {
+        const li = document.createElement("li");
+        li.textContent = "Please select an event city and time.";
+        resultsList.appendChild(li);
+        return;
+      }
+  
+      const baseMinutes = parseTimeToMinutes(timeStr);
+      if (baseMinutes === null) {
+        const li = document.createElement("li");
+        li.textContent = "Invalid time format.";
+        resultsList.appendChild(li);
+        return;
+      }
+  
+      CITY_DATA.forEach(city => {
+        const li = document.createElement("li");
+  
+        const citySpan = document.createElement("div");
+        citySpan.className = "results-city";
+        citySpan.innerHTML = `<span>${city.flag}</span><span>${city.label}</span>`;
+  
+        const offset = getOffsetMinutes(baseZone, city.zone);
+        const converted = formatMinutesToTime(baseMinutes + offset);
+  
+        const timeSpan = document.createElement("div");
+        timeSpan.className = "results-time";
+        timeSpan.textContent = converted.display;
+  
+        li.appendChild(citySpan);
+        li.appendChild(timeSpan);
+  
+        resultsList.appendChild(li);
+      });
     });
   });
-  
-  // ==========================
-  // THEME SWITCH
-  // ==========================
-  document.getElementById("themeSwitch").onchange = e => {
-    document.documentElement.classList.toggle("dark", e.target.checked);
-  };
   

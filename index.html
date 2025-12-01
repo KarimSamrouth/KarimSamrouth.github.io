@@ -6,8 +6,8 @@
   <title>Global Time App</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
-  <!-- Top navigation -->
   <header class="top-nav">
     <div class="logo-area">
       <span class="logo-dot"></span>
@@ -29,15 +29,12 @@
   </header>
 
   <main>
-    <!-- Hero section -->
+    <!-- HERO -->
     <section class="hero" id="home">
       <div class="hero-inner">
         <div class="hero-text">
           <h1>See the world at a glance.</h1>
-          <p>
-            Track live time across cities, plan global events, and explore the world from a single,
-            minimal dashboard.
-          </p>
+          <p>Track live time across cities, plan global events, and explore the world from a single, minimal dashboard.</p>
           <div class="hero-badges">
             <span class="badge">Live clocks</span>
             <span class="badge">Event converter</span>
@@ -47,13 +44,11 @@
       </div>
     </section>
 
-    <!-- Main dashboard -->
+    <!-- DASHBOARD -->
     <section class="app-section" id="dashboard">
       <div class="section-header">
         <h2>World Clock Dashboard</h2>
-        <p class="section-subtitle">
-          Add cities to your board, compare time zones, and switch themes freely.
-        </p>
+        <p class="section-subtitle">Add cities to your board, compare time zones, and switch themes freely.</p>
       </div>
 
       <div class="controls-row">
@@ -62,23 +57,17 @@
           <select id="citySelect"></select>
         </div>
 
-        <button id="addCityBtn" class="primary-btn">
-          + Add City
-        </button>
+        <button id="addCityBtn" class="primary-btn">+ Add City</button>
       </div>
 
-      <section class="clocks-container" id="clocksContainer">
-        <!-- Cards injected by JS -->
-      </section>
+      <section class="clocks-container" id="clocksContainer"></section>
     </section>
 
-    <!-- Event time converter -->
+    <!-- EVENT CONVERTER -->
     <section class="app-section two-column" id="converter">
       <div class="section-header">
         <h2>Event Time Converter</h2>
-        <p class="section-subtitle">
-          Pick an event time in one city and instantly see what time it is everywhere else.
-        </p>
+        <p class="section-subtitle">Pick an event time in one city and instantly see what time it is everywhere else.</p>
       </div>
 
       <div class="two-column-grid">
@@ -95,90 +84,83 @@
             <input type="time" id="eventTime" />
           </div>
 
-          <button id="convertBtn" class="primary-btn full-width">
-            Convert to all cities
-          </button>
-
-          <p class="hint-text">
-            Conversion assumes today’s time zone offsets (DST-aware for today).
-          </p>
+          <button id="convertBtn" class="primary-btn full-width">Convert to all cities</button>
+          <p class="hint-text">Conversion assumes today’s time zone offsets (DST-aware for today).</p>
         </div>
 
         <div class="card-panel">
           <h3>Converted times</h3>
-          <ul id="resultsList" class="results-list">
-            <!-- Filled by JS -->
-          </ul>
+          <ul id="resultsList" class="results-list"></ul>
         </div>
       </div>
     </section>
 
-    <!-- World map -->
+    <!-- WORLD MAP -->
     <section class="app-section" id="world-map">
       <div class="section-header">
         <h2>Interactive World Map</h2>
-        <p class="section-subtitle">
-          Click a city on the map to add it instantly to your dashboard.
-        </p>
+        <p class="section-subtitle">Click a city on the map to add it instantly to your dashboard.</p>
       </div>
 
       <div class="map-wrapper">
-        <!-- Simple stylized “map” with clickable city dots -->
         <svg class="world-map" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+          
+          <!-- Background -->
           <defs>
             <linearGradient id="map-bg" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stop-color="#eff6ff" />
               <stop offset="100%" stop-color="#e0f2fe" />
             </linearGradient>
           </defs>
+
           <rect x="0" y="0" width="800" height="400" fill="url(#map-bg)" rx="24" />
 
-          <!-- Very abstract continents blobs -->
-          <ellipse cx="220" cy="180" rx="150" ry="80" fill="#cbd5f5" opacity="0.7" />
-          <ellipse cx="520" cy="190" rx="190" ry="90" fill="#bfdbfe" opacity="0.7" />
-          <ellipse cx="640" cy="120" rx="90" ry="50" fill="#93c5fd" opacity="0.7" />
+          <!-- DETAILED WORLD MAP SILHOUETTE -->
+          <path
+            d="M46 180l10-8 14-2 5-9 12-4 8 5 6 12 11 6 18-2 16-5 10 1 6-3 2-10-3-7 9-11 15-6 12 3 7 11 11 4 9-2 13-11 18-6 15 3 12 9 9 13 4 14 18 11 15 2 14-7 9-12 4-15 7-9 11-8 17-3 26 4 16 9 12 14 4 11 1 12-5 9-7 6-3 12-1 13 5 10 14 6 20 5 19-2 17-6 14-9 9-12 4-15 6-7 12-3 10 4 14 12 11 14 5 13 2 18-5 14-12 9-18 6-14 2-12 8-6 10-1 12 4 15 9 14 14 11 18 8 13 3 10 6 7 8 3 10-4 7-9 6-18 2-19-4-20-8-18-10-17-13-14-16-10-18-6-18-1-20 2-15-8-12-15-8-18-4-19 2-15 8-10 13-6 17-4 19-7 15-12 10-17 6-20 2-18-5-14-9-10-13-5-17v-19l-2-13-7-10-13-8-16-4-20 2-18 7-14 12-8 18-4 21-6 15-11 12-15 8-18 4-17-3-14-6-11-10-8-15-5-17-1-19 3-13 7-10 12-8 15-4h18l15 3 10 7 8 11 4 13 2 15 5 13 11 10 15 8 18 3 20-3 16-7 12-10 7-13 2-14-1-16-5-13-10-10-15-6-19-3-18 3-14 7-11 11-7 14-3 17 1 19-3 14-6 11-12 8-17 4-18-2-14-6-11-10-6-15-2-20 1-13z"
+            fill="#93c5fd"
+            opacity="0.85"
+          />
 
-          <!-- City dots (positions are approximated) -->
-          <!-- Los Angeles -->
-          <circle class="map-city-dot" data-zone="America/Los_Angeles" cx="150" cy="200" r="6" />
+          <!-- CITY DOTS -->
+          <circle class="map-city-dot" data-zone="America/Los_Angeles" cx="150" cy="200" r="6"></circle>
           <text x="165" y="204" class="map-city-label">Los Angeles</text>
 
-          <!-- New York -->
-          <circle class="map-city-dot" data-zone="America/New_York" cx="220" cy="180" r="6" />
-          <text x="235" y="184" class="map-city-label">New York</text>
+          <circle class="map-city-dot" data-zone="America/New_York" cx="250" cy="170" r="6"></circle>
+          <text x="265" y="174" class="map-city-label">New York</text>
 
-          <!-- London -->
-          <circle class="map-city-dot" data-zone="Europe/London" cx="400" cy="135" r="6" />
-          <text x="415" y="139" class="map-city-label">London</text>
+          <circle class="map-city-dot" data-zone="Europe/London" cx="410" cy="120" r="6"></circle>
+          <text x="425" y="124" class="map-city-label">London</text>
 
-          <!-- Paris -->
-          <circle class="map-city-dot" data-zone="Europe/Paris" cx="420" cy="150" r="6" />
-          <text x="435" y="154" class="map-city-label">Paris</text>
+          <circle class="map-city-dot" data-zone="Europe/Paris" cx="430" cy="135" r="6"></circle>
+          <text x="445" y="139" class="map-city-label">Paris</text>
 
-          <!-- Dubai -->
-          <circle class="map-city-dot" data-zone="Asia/Dubai" cx="480" cy="190" r="6" />
-          <text x="495" y="194" class="map-city-label">Dubai</text>
+          <circle class="map-city-dot" data-zone="Asia/Beirut" cx="465" cy="150" r="6"></circle>
+          <text x="480" y="154" class="map-city-label">Beirut</text>
 
-          <!-- Beirut -->
-          <circle class="map-city-dot" data-zone="Asia/Beirut" cx="450" cy="170" r="6" />
-          <text x="465" y="174" class="map-city-label">Beirut</text>
+          <circle class="map-city-dot" data-zone="Asia/Dubai" cx="495" cy="175" r="6"></circle>
+          <text x="510" y="179" class="map-city-label">Dubai</text>
 
-          <!-- Tokyo -->
-          <circle class="map-city-dot" data-zone="Asia/Tokyo" cx="640" cy="190" r="6" />
-          <text x="655" y="194" class="map-city-label">Tokyo</text>
+          <circle class="map-city-dot" data-zone="Asia/Tokyo" cx="655" cy="185" r="6"></circle>
+          <text x="670" y="189" class="map-city-label">Tokyo</text>
 
-          <!-- Sydney -->
-          <circle class="map-city-dot" data-zone="Australia/Sydney" cx="700" cy="260" r="6" />
-          <text x="715" y="264" class="map-city-label">Sydney</text>
+          <circle class="map-city-dot" data-zone="Australia/Sydney" cx="720" cy="265" r="6"></circle>
+          <text x="735" y="269" class="map-city-label">Sydney</text>
+
         </svg>
+
+        <!-- TOOLTIP -->
+        <div id="mapTooltip" class="map-tooltip"></div>
+
       </div>
     </section>
+
   </main>
 
   <footer class="footer">
-    <p>Made with 🌍 by Karim — Global Time App &copy; 2025</p>
+    <p>Made with 🌍 by Karim — Global Time App © 2025</p>
   </footer>
 
-  <script src="script.js?v=2"></script>
+  <script src="script.js"></script>
 </body>
 </html>

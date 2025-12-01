@@ -1,184 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Global Time App</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChronoGlobe - World Time & Events</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Top navigation -->
-  <header class="top-nav">
-    <div class="logo-area">
-      <span class="logo-dot"></span>
-      <span class="logo-text">Global Time App</span>
-    </div>
 
-    <nav class="nav-links">
-      <a href="#dashboard">Dashboard</a>
-      <a href="#converter">Event Converter</a>
-      <a href="#world-map">World Map</a>
-    </nav>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark and light theme">
+        <i class="fas fa-sun"></i>
+    </button>
 
-    <div class="theme-toggle">
-      <label class="switch">
-        <input type="checkbox" id="themeSwitch" />
-        <span class="slider"></span>
-      </label>
-    </div>
-  </header>
-
-  <main>
-    <!-- Hero section -->
-    <section class="hero" id="home">
-      <div class="hero-inner">
-        <div class="hero-text">
-          <h1>See the world at a glance.</h1>
-          <p>
-            Track live time across cities, plan global events, and explore the world from a single,
-            minimal dashboard.
-          </p>
-          <div class="hero-badges">
-            <span class="badge">Live clocks</span>
-            <span class="badge">Event converter</span>
-            <span class="badge">Interactive map</span>
-          </div>
+    <header class="hero-section">
+        <div class="hero-content">
+            <h1>ChronoGlobe</h1>
+            <p>Your World, Synchronized. Real-time clocks, event conversion, and global planning.</p>
         </div>
-      </div>
-    </section>
+    </header>
 
-    <!-- Main dashboard -->
-    <section class="app-section" id="dashboard">
-      <div class="section-header">
-        <h2>World Clock Dashboard</h2>
-        <p class="section-subtitle">
-          Add cities to your board, compare time zones, and switch themes freely.
-        </p>
-      </div>
+    <main class="container">
 
-      <div class="controls-row">
-        <div class="control-group">
-          <label class="control-label" for="citySelect">Add a city</label>
-          <select id="citySelect"></select>
-        </div>
+        <section class="time-management-section">
+            <div class="search-and-map">
+                <div class="search-card glass-card">
+                    <h3>Add a City</h3>
+                    <div class="autocomplete-container">
+                        <input type="text" id="city-search" placeholder="Search for a city..." autocomplete="off">
+                        <ul id="suggestions-list" class="suggestions-list"></ul>
+                        <button id="add-city-btn" class="main-btn" disabled>Add City</button>
+                    </div>
+                </div>
+                
+                <div class="map-card glass-card">
+                    <h3>Global View</h3>
+                    <div id="world-map" class="world-map">
+                        <p class="map-placeholder">Interactive World Map placeholder. Click on the map to select a city (Feature implemented in JS using coordinates/data attributes).</p>
+                    </div>
+                </div>
+            </div>
 
-        <button id="addCityBtn" class="primary-btn">
-          + Add City
-        </button>
-      </div>
+            <div id="city-clocks" class="city-clocks">
+            </div>
+        </section>
 
-      <section class="clocks-container" id="clocksContainer">
-        <!-- Cards injected by JS -->
-      </section>
-    </section>
+        <section class="event-planner-section">
+            <h2><i class="fas fa-calendar-alt"></i> Event Time Converter</h2>
+            <div class="event-planner-card glass-card">
+                <div class="event-inputs">
+                    <input type="datetime-local" id="event-datetime" value="2025-12-01T10:00" class="input-field">
+                    <select id="event-timezone-from" class="input-field"></select>
+                    <button id="convert-time-btn" class="main-btn">Convert</button>
+                </div>
+                
+                <div id="conversion-results" class="conversion-results">
+                    <p class="initial-message">Select a time and 'From' city, then click Convert.</p>
+                </div>
+            </div>
+        </section>
 
-    <!-- Event time converter -->
-    <section class="app-section two-column" id="converter">
-      <div class="section-header">
-        <h2>Event Time Converter</h2>
-        <p class="section-subtitle">
-          Pick an event time in one city and instantly see what time it is everywhere else.
-        </p>
-      </div>
+    </main>
 
-      <div class="two-column-grid">
-        <div class="card-panel">
-          <h3>Event details</h3>
+    <footer>
+        <p>&copy; 2025 ChronoGlobe. All rights reserved.</p>
+    </footer>
 
-          <div class="form-row">
-            <label for="baseCitySelect">Event city</label>
-            <select id="baseCitySelect"></select>
-          </div>
-
-          <div class="form-row">
-            <label for="eventTime">Event time</label>
-            <input type="time" id="eventTime" />
-          </div>
-
-          <button id="convertBtn" class="primary-btn full-width">
-            Convert to all cities
-          </button>
-
-          <p class="hint-text">
-            Conversion assumes today’s time zone offsets (DST-aware for today).
-          </p>
-        </div>
-
-        <div class="card-panel">
-          <h3>Converted times</h3>
-          <ul id="resultsList" class="results-list">
-            <!-- Filled by JS -->
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- World map -->
-    <section class="app-section" id="world-map">
-      <div class="section-header">
-        <h2>Interactive World Map</h2>
-        <p class="section-subtitle">
-          Click a city on the map to add it instantly to your dashboard.
-        </p>
-      </div>
-
-      <div class="map-wrapper">
-        <!-- Simple stylized “map” with clickable city dots -->
-        <svg class="world-map" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
-          <defs>
-            <linearGradient id="map-bg" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#eff6ff" />
-              <stop offset="100%" stop-color="#e0f2fe" />
-            </linearGradient>
-          </defs>
-          <rect x="0" y="0" width="800" height="400" fill="url(#map-bg)" rx="24" />
-
-          <!-- Very abstract continents blobs -->
-          <ellipse cx="220" cy="180" rx="150" ry="80" fill="#cbd5f5" opacity="0.7" />
-          <ellipse cx="520" cy="190" rx="190" ry="90" fill="#bfdbfe" opacity="0.7" />
-          <ellipse cx="640" cy="120" rx="90" ry="50" fill="#93c5fd" opacity="0.7" />
-
-          <!-- City dots (positions are approximated) -->
-          <!-- Los Angeles -->
-          <circle class="map-city-dot" data-zone="America/Los_Angeles" cx="150" cy="200" r="6" />
-          <text x="165" y="204" class="map-city-label">Los Angeles</text>
-
-          <!-- New York -->
-          <circle class="map-city-dot" data-zone="America/New_York" cx="220" cy="180" r="6" />
-          <text x="235" y="184" class="map-city-label">New York</text>
-
-          <!-- London -->
-          <circle class="map-city-dot" data-zone="Europe/London" cx="400" cy="135" r="6" />
-          <text x="415" y="139" class="map-city-label">London</text>
-
-          <!-- Paris -->
-          <circle class="map-city-dot" data-zone="Europe/Paris" cx="420" cy="150" r="6" />
-          <text x="435" y="154" class="map-city-label">Paris</text>
-
-          <!-- Dubai -->
-          <circle class="map-city-dot" data-zone="Asia/Dubai" cx="480" cy="190" r="6" />
-          <text x="495" y="194" class="map-city-label">Dubai</text>
-
-          <!-- Beirut -->
-          <circle class="map-city-dot" data-zone="Asia/Beirut" cx="450" cy="170" r="6" />
-          <text x="465" y="174" class="map-city-label">Beirut</text>
-
-          <!-- Tokyo -->
-          <circle class="map-city-dot" data-zone="Asia/Tokyo" cx="640" cy="190" r="6" />
-          <text x="655" y="194" class="map-city-label">Tokyo</text>
-
-          <!-- Sydney -->
-          <circle class="map-city-dot" data-zone="Australia/Sydney" cx="700" cy="260" r="6" />
-          <text x="715" y="264" class="map-city-label">Sydney</text>
-        </svg>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <p>Made with 🌍 by Karim — Global Time App &copy; 2025</p>
-  </footer>
-
-  <script src="script.js?v=2"></script>
+    <script src="script.js"></script>
 </body>
 </html>
